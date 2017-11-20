@@ -68,22 +68,26 @@ public class BinarySearchTree {
 	 * @return
 	 */
 	public int find(String state){
-	Node current = root;
-	int population =-1;
-	nodeCount = 0;
-	while ((state.compareToIgnoreCase(current.stateName) !=0)){
-		nodeCount++; population = current.statePopulation;
-		if((state.compareToIgnoreCase(current.stateName)) < 0){
-			current = current.leftChild;
-		}
-		else{
-			current = current.rightChild;
+		Node current = root;
+		int population =-1;
+		nodeCount = 0;
+		while ((state.compareToIgnoreCase(current.stateName) !=0)){
+			nodeCount++;
+			if((state.compareToIgnoreCase(current.stateName)) < 0){
+				current = current.leftChild;
 			}
-		if(current == null){
-			population =-1;
-			return population;}
+			else{
+				current = current.rightChild;
+				}
+			if(current == null){
+				population =-1;
+				return population;
+			}
+			if(state.compareTo(current.stateName) == 0){
+				population = current.statePopulation;
+			}
 		}
-	return population;
+		return population;
 	}
 	
 	public String finder(String state){
@@ -112,8 +116,6 @@ public class BinarySearchTree {
 				isLeftChild = false;
 				current =current.rightChild;
 			}
-//		if(current==null)
-//			return;
 		}
 		if(current.leftChild==null && current.rightChild==null){
 		if(current == root)
@@ -149,9 +151,6 @@ public class BinarySearchTree {
 		}
 		return;
 		}
-	
-
-	
 	/**
 	 * Finds a node in the multiple child delete case and connects the appropriate children to the parent node.
 	 * @param delNode The node to be deleted
@@ -190,8 +189,8 @@ public class BinarySearchTree {
 	public void printPreorder(Node miniRoot){
 		if (miniRoot != null){
 			miniRoot.printNode();
-			printInorder(miniRoot.leftChild);
-			printInorder(miniRoot.rightChild);
+			printPreorder(miniRoot.leftChild);
+			printPreorder(miniRoot.rightChild);
 		}
 	}
 	
@@ -201,8 +200,8 @@ public class BinarySearchTree {
 	 */
 	public void printPostorder(Node miniRoot){
 		if (miniRoot != null){
-			printInorder(miniRoot.leftChild);
-			printInorder(miniRoot.rightChild);
+			printPostorder(miniRoot.leftChild);
+			printPostorder(miniRoot.rightChild);
 			miniRoot.printNode();
 		}		
 	}
