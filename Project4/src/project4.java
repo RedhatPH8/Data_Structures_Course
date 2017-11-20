@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -13,46 +14,42 @@ import java.util.Scanner;
  *6.[] Print the states with the minimum and maximum population in the tree by calling the printMinimum and printMaximum methods, respectively.
  *  
  * @author Ryan Geddings N01067534
- * @version 11/10/2017
+ * @version 11/17/2017
  */
 public class project4 {
 
+	static String maximum, minimum;
+	static int maximumPop=0, minimumPop=0;
 	
 public static void main(String[] args) {
 	//Displays assignment info
-			System.out.println("COP3538 Project 3 - Xudong Liu\n\nStacks and Priority Queues");
+			System.out.println("COP3538 Project 4 - Ryan Geddings\n\nBinary Search Trees");
 		
 			//Locate file, must be in same directory
 			Scanner keyboard = new Scanner(System.in);
 			System.out.print("Enter the file Name: ");
-			String file = keyboard.next();
+			String file = "States4.csv";//keyboard.next();
 			keyboard.close();
 			
 			//Read file and parse for input
 			int i = 0;//counter
-			int newEngCount=0, midAtlCount=0, southCount=0;
-			Stack stateStackList=new Stack();
+			BinarySearchTree stateTree = new BinarySearchTree();
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(file));
 				String line = br.readLine(); //Reads and bypasses header
 					while((line = br.readLine()) != null) {
 							String[] split = line.split(",");
-							State nextState = new State(split[0], split[1], split[2], Integer.parseInt(split[3]), split[4], Integer.parseInt(split[5])); 									
-							if (nextState.getRegion().equalsIgnoreCase("New England")) {
-								stateStackList.push(nextState);
-								i++; newEngCount++;
-								}
-							else if (nextState.getRegion().equalsIgnoreCase("Middle Atlantic")) {
-								stateStackList.push(nextState);
-								i++; midAtlCount++;
+							stateTree.insert(split[0], Integer.parseInt(split[3]));
+							if(maximumPop==0 || (maximumPop < (Integer.parseInt(split[3])))){
+								maximum=split[0];
+								maximumPop=Integer.parseInt(split[3]);}
+							if(minimumPop==0 || (minimumPop > (Integer.parseInt(split[3])))){
+								minimum=split[0];
+								minimumPop=Integer.parseInt(split[3]);
 							}
-							else if (nextState.getRegion().equalsIgnoreCase("South")) {
-								stateStackList.push(nextState);
-								i++; southCount++;
-							}
-							else 
-								i++;
-					}	
+					i++;		
+					}
+						
 					br.close();
 					
 			}
@@ -60,78 +57,123 @@ public static void main(String[] args) {
 				System.out.format("\nFile was not found. The application will terminate.\n");
 				System.exit(0);
 			}
-			System.out.format("\nThere were %s state records put on the stack.\n", southCount + midAtlCount+ newEngCount);
-			System.out.println("\nStack Contents:");
-			System.out.printf("%-17s", "\nState Name");
-			System.out.printf("%-16s", "Capital City");
-			System.out.printf("%-12s", "State Abbr");
-			System.out.printf("%-18s", "State Population");
-			System.out.printf("%-10s", "\tRegion");
-			System.out.print("\t\tUS House Seats\n");
-			 System.out.println("----------------------------------------------------------------------------------------------");
-			stateStackList.printStackedList();
-			Queue queuedList = new Queue();
-			int counter = 0;
-			while(!stateStackList.isEmpty()){
-				if(counter %2 ==0 ){
-					queuedList.insertFront(stateStackList.pop());
-					counter--;
-				}
-				else{
-					queuedList.insertEnd(stateStackList.pop());
-					counter--;
-				}
-			}
-			System.out.println("Queue Contents:");
-			System.out.printf("%-17s", "\nState Name");
-			System.out.printf("%-16s", "Capital City");
-			System.out.printf("%-12s", "State Abbr");
-			System.out.printf("%-18s", "State Population");
-			System.out.printf("%-10s", "\tRegion");
-			System.out.print("\t\tUS House Seats\n");
-			 System.out.println("----------------------------------------------------------------------------------------------");
-			 queuedList.printQueue();
-			 
-			 queuedList.findDelete("Massachusetts");
-			 queuedList.findDelete("New Hampshire");
-			 queuedList.findDelete("Rhode Island");
-			 queuedList.findDelete("Maryland");
-			 queuedList.findDelete("New Jersey");
-			 queuedList.findDelete("Pennsylvania");
-			 queuedList.findDelete("Alabama");
-			 queuedList.findDelete("Kentucky");
-			 queuedList.findDelete("North Carolina");
-			 
-			 System.out.println("Queue Contents:");
-			 System.out.printf("%-17s", "\nState Name");
-			 System.out.printf("%-16s", "Capital City");
-			 System.out.printf("%-12s", "State Abbr");
-			 System.out.printf("%-18s", "State Population");
-			 System.out.printf("%-10s", "\tRegion");
-			 System.out.print("\t\tUS House Seats\n");
-				 System.out.println("----------------------------------------------------------------------------------------------");
-				 queuedList.printQueue();
-				 i=1;
-				 while(!queuedList.isEmpty()){
-					
-					 if(i%2!=0){
-						stateStackList.push(queuedList.removeFront().stateObject);
-						i++;
-					}
-					else{
-						stateStackList.push(queuedList.removeEnd().stateObject);
-						i++;
-						}
-					}	 
-			 System.out.println("\nStack Contents:");
-			 System.out.printf("%-17s", "\nState Name");
-			 System.out.printf("%-16s", "Capital City");
-			 System.out.printf("%-12s", "State Abbr");
-			 System.out.printf("%-18s", "State Population");
-			 System.out.printf("%-10s", "\tRegion");
-			 System.out.print("\t\tUS House Seats\n");
-					 System.out.println("----------------------------------------------------------------------------------------------");
-					stateStackList.printStackedList();
-			 System.exit(0);
-		}
+			System.out.format("\n\nThere were %s state records put on the binary search tree.", i);
+			System.out.println("\n\nInorder Traversal:\n");
+			System.out.printf("%-25s%s\n", "State Name", "State Population");
+			System.out.println("-----------------------------------------");
+			stateTree.printInorder(stateTree.root);
+			stateTree.delete("California");
+			System.out.println("\nCalifornia has been deleted from tree");
+			stateTree.delete("Florida");
+			System.out.println("Florida has been deleted from tree");
+			stateTree.delete("Michigan");
+			System.out.println("Michigan has been deleted from tree\n");
+			System.out.println("Preorder Traversal\n");
+			System.out.printf("%-25s%s\n", "State Name", "State Population");
+			System.out.println("-----------------------------------------");
+			stateTree.printPreorder(stateTree.root); 
+			System.out.print("\n"+stateTree.finder("Kentucky"));
+			System.out.print("\n"+stateTree.finder("Rhode Island"));
+			System.out.print("\n"+stateTree.finder("Florida"));
+			
+			
+			stateTree.delete("Delaware");
+			System.out.println("\nDelaware has been deleted from tree");
+			stateTree.delete("Wyoming");
+			System.out.println("Wyoming has been deleted from tree");
+			stateTree.delete("West Virginia");
+			System.out.println("West Virginia has been deleted from tree");
+			stateTree.delete("South Dakota");
+			System.out.println("South Dakota has been deleted from tree\n");
+			System.out.println("Postorder Traversal\n");
+			System.out.printf("%-25s%s\n", "State Name", "State Population");
+			System.out.println("-----------------------------------------");
+			stateTree.printPostorder(stateTree.root);
+			stateTree.printMinimum(stateTree.root);
+			System.out.println("\n\n\nState with the minimum population");
+			System.out.printf("\n%-25s%s\n", "State Name", "State Population");
+			System.out.println("-----------------------------------------");
+			System.out.printf("%-25s%,10d\n", stateTree.minimum, stateTree.minimumPop);
+			stateTree.printMaximum(stateTree.root);
+			System.out.println("\nState with the maximum population");
+			System.out.printf("\n%-25s%s\n", "State Name", "State Population");
+			System.out.println("-----------------------------------------");
+			System.out.printf("%-25s%,10d\n", stateTree.maximum, stateTree.maximumPop);
+
+}
+			
+//			System.out.format("\nThere were %s state records put on the stack.\n", southCount + midAtlCount+ newEngCount);
+//			System.out.println("\nStack Contents:");
+//			System.out.printf("%-17s", "\nState Name");
+//			System.out.printf("%-16s", "Capital City");
+//			System.out.printf("%-12s", "State Abbr");
+//			System.out.printf("%-18s", "State Population");
+//			System.out.printf("%-10s", "\tRegion");
+//			System.out.print("\t\tUS House Seats\n");
+//			 System.out.println("----------------------------------------------------------------------------------------------");
+//			stateStackList.printStackedList();
+//			Queue queuedList = new Queue();
+//			int counter = 0;
+//			while(!stateStackList.isEmpty()){
+//				if(counter %2 ==0 ){
+//					queuedList.insertFront(stateStackList.pop());
+//					counter--;
+//				}
+//				else{
+//					queuedList.insertEnd(stateStackList.pop());
+//					counter--;
+//				}
+//			}
+//			System.out.println("Queue Contents:");
+//			System.out.printf("%-17s", "\nState Name");
+//			System.out.printf("%-16s", "Capital City");
+//			System.out.printf("%-12s", "State Abbr");
+//			System.out.printf("%-18s", "State Population");
+//			System.out.printf("%-10s", "\tRegion");
+//			System.out.print("\t\tUS House Seats\n");
+//			 System.out.println("----------------------------------------------------------------------------------------------");
+//			 queuedList.printQueue();
+//			 
+//			 queuedList.findDelete("Massachusetts");
+//			 queuedList.findDelete("New Hampshire");
+//			 queuedList.findDelete("Rhode Island");
+//			 queuedList.findDelete("Maryland");
+//			 queuedList.findDelete("New Jersey");
+//			 queuedList.findDelete("Pennsylvania");
+//			 queuedList.findDelete("Alabama");
+//			 queuedList.findDelete("Kentucky");
+//			 queuedList.findDelete("North Carolina");
+//			 
+//			 System.out.println("Queue Contents:");
+//			 System.out.printf("%-17s", "\nState Name");
+//			 System.out.printf("%-16s", "Capital City");
+//			 System.out.printf("%-12s", "State Abbr");
+//			 System.out.printf("%-18s", "State Population");
+//			 System.out.printf("%-10s", "\tRegion");
+//			 System.out.print("\t\tUS House Seats\n");
+//				 System.out.println("----------------------------------------------------------------------------------------------");
+//				 queuedList.printQueue();
+//				 i=1;
+//				 while(!queuedList.isEmpty()){
+//					
+//					 if(i%2!=0){
+//						stateStackList.push(queuedList.removeFront().stateObject);
+//						i++;
+//					}
+//					else{
+//						stateStackList.push(queuedList.removeEnd().stateObject);
+//						i++;
+//						}
+//					}	 
+//			 System.out.println("\nStack Contents:");
+//			 System.out.printf("%-17s", "\nState Name");
+//			 System.out.printf("%-16s", "Capital City");
+//			 System.out.printf("%-12s", "State Abbr");
+//			 System.out.printf("%-18s", "State Population");
+//			 System.out.printf("%-10s", "\tRegion");
+//			 System.out.print("\t\tUS House Seats\n");
+//					 System.out.println("----------------------------------------------------------------------------------------------");
+//					stateStackList.printStackedList();
+//			 System.exit(0);
+//		}
 }
