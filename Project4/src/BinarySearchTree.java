@@ -1,5 +1,3 @@
-
-
 /**
  *
  *[{@link #BinarySearchTree()}]1. A no-arg constructor that creates an empty tree.<p>
@@ -20,6 +18,7 @@ public class BinarySearchTree {
 	int nodeCount;
 	int minimumPop=1000000000, maximumPop;
 	String minimum, maximum;
+	String printStatement;
 	
 	
 	public BinarySearchTree(){
@@ -32,8 +31,8 @@ public class BinarySearchTree {
 	/**
 	 * Will insert a node into the proper position in the search tree based on state name.
 	 * 
-	 * @param state
-	 * @param population
+	 * @param state String of the state name
+	 * @param population Integer containing the population of a state
 	 */
 	public void insert(String state, int population){
 	Node stateNode = new Node(state, population);
@@ -65,12 +64,12 @@ public class BinarySearchTree {
 	/**
 	 * will search the tree for the state of the given name and if found will return the population or -1 if not found.
 	 * @param state
-	 * @return
+	 * @return population Returns the population of the found string state, or a -1 if the string is not found
 	 */
 	public int find(String state){
 		Node current = root;
 		int population =-1;
-		nodeCount = 0;
+		nodeCount = 1;
 		while ((state.compareToIgnoreCase(current.stateName) !=0)){
 			nodeCount++;
 			if((state.compareToIgnoreCase(current.stateName)) < 0){
@@ -81,25 +80,20 @@ public class BinarySearchTree {
 				}
 			if(current == null){
 				population =-1;
+				printStatement = (state+" is not found.\n" +nodeCount + " nodes visited\n");
 				return population;
 			}
 			if(state.compareTo(current.stateName) == 0){
+				printStatement = (state+" was found with a population of " +current.statePopulation+"\n" +(nodeCount)+ " nodes visited\n");
 				population = current.statePopulation;
 			}
 		}
 		return population;
 	}
 	
-	public String finder(String state){
-		if((find(state))==-1){
-			return (state+" is not found.\n" +nodeCount + " nodes visited\n");}
-		else{
-			return (state+" was found with a population of " +find(state)+"\n" +nodeCount+ " nodes visited\n");} 
-	} 
-		
 	/**
 	 * will find and delete the given state from the tree.
-	 * @param state
+	 * @param state String of state name
 	 */
 	public void delete(String state){
 		Node current = root;
@@ -174,6 +168,7 @@ public class BinarySearchTree {
 
 	/**
 	 * Will traverse the tree in using a Inorder traversal (LNR) and print each node.
+	 * @param miniRoot the starting point for each iteration
 	 */
 	public void printInorder(Node miniRoot){
 		if (miniRoot != null){
@@ -185,6 +180,7 @@ public class BinarySearchTree {
 	
 	/**
 	 * will traverse the tree in using a Preorder traversal (NLR) and print each node.
+	 * @param miniRoot the starting point for each interation
 	 */
 	public void printPreorder(Node miniRoot){
 		if (miniRoot != null){
@@ -196,7 +192,7 @@ public class BinarySearchTree {
 	
 	/**
 	 * will traverse the tree in using a Postorder traversal (LRN) and print each node.
-	 * @param miniRoot 
+	 * @param miniRoot the starting point for each iteration
 	 */
 	public void printPostorder(Node miniRoot){
 		if (miniRoot != null){
@@ -206,8 +202,9 @@ public class BinarySearchTree {
 		}		
 	}
 	
-	/**TODO
+	/**
 	 * find and print the state with the minimum population.
+	 * @param miniRoot the starting point for each interation
 	 */
 	public void printMinimum(Node miniRoot){
 		if(miniRoot != null){
@@ -226,9 +223,10 @@ public class BinarySearchTree {
 		}
 	}
 	
-	/**TODO
-	 * find and print the state with the maximum population.
-	 */
+/**
+ * find and print the state with the maximum population.
+ * @param miniRoot the starting point for each intertion
+ */
 	public void printMaximum(Node miniRoot){
 		if(miniRoot != null){
 			printMaximum(miniRoot.leftChild);{
@@ -270,7 +268,7 @@ public class BinarySearchTree {
 		}
 	
 		/**
-		 * 
+		 * Prints a node with the name followed by population.
 		 */
 		public void printNode() {
 		System.out.printf("%-25s%,10d\n", stateName, statePopulation);
